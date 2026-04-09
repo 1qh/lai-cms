@@ -1,0 +1,146 @@
+<html>
+<head>
+<script src="jwplayer.js"></script>
+<script type="text/javascript">jwplayer.key="dWwDdbLI0ul1clbtlw+4/UHPxlYmLoE9Ii9QEw==";</script>
+<style>
+.jw-skip {
+    cursor: default;
+    position: static !important;
+    border-radius: 15px; background-color: rgba(0, 0, 0, 0.5); 
+    cursor: pointer; display: block;
+    padding:5px 10px;
+}
+</style>
+</head>
+
+<body style="margin: 0; overflow: hidden">
+<div style="position:relative">
+  <div id="out_stream_player" width="100%" height="100%"></div>
+  <div id="btn_skip" style="position: absolute; right: 10px; top: 10px;"></div>
+  <div id="btn_mute" style="border-radius: 15px; background-color: rgba(0, 0, 0, 0.5); width: 30px; height: 30px; position: absolute; right: 10px; bottom: 10px; cursor: pointer; display: none;"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAsCAMAAAAUyMtVAAAAb1BMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8v0wLRAAAAJXRSTlMAsxuupKuofDqwI6KBd1o0MCsNBpmKcUUnHxObkmdiSj8PdU8VePWs4AAAAVhJREFUSMe1luF2gjAMhXuBgoIOBBmMzTnU93/GcY9i5RBs/nB/0HDIR9M2CRhRRR3aJDBqHUIMitVEagEqUfp/RbjLqv1HGafe6z8FyuhjKf4IErAHTvL+xJCADe+kOfIQIpBmvN3M/K+ADJiAkdrb1L36hAxQKefevbp3zTdkoC94bZ5BBYmFkwDsw5zDDsAP/WPgLfAH2ICOWwDDZAneA1X0eLPhEvfGWA9gzrSawWiHMawMfABPGUca3JVcAXTc0cNgnHjcPmAM/ve+fOw0ADOp5uExNg3QDWbEHGfdagD6bMdxFYAhZXJI+kXrt3WNg0umqWF9wHWafLr0rmldmN7+AuIexa6AdCVauBJ16pvjAlAWzzrK9W2mnbUZ6rwVANei49u8VVoZaCO5VfKJshm7uTMxpAuzSVaQSUCZ8f1ewrwQZlmB+ygqlT6yJVnrw05i+dfhH6K0DzhU9Gq8AAAAAElFTkSuQmCC" style="margin: auto; width: 50%; top: 0px; bottom: 0px; left: 0px; right: 0px; position: absolute;"></div>
+  <div id="btn_unmute" style="border-radius: 15px; background-color: rgba(0, 0, 0, 0.5); width: 30px; height: 30px; position: absolute; right: 10px; bottom: 10px; cursor: pointer; display: block;"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADQAAAAsCAMAAAAdI2svAAAAXVBMVEUAAAD///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////9RKvvlAAAAH3RSTlMAsxusp6CkLXspqXlDJiAZBZMRbZqKfWkWFHJQSjc02+a4rAAAARRJREFUSMe11umugyAQBeA5gMgiF9R7u9zt/R+zKdoSkxoYk55fk0m+aMiw0Mv0X1KeBLHSSwBQLBUccgzDfCgskQyj8cgRA4ZhI6vARn8SbPQDcFH6BhdNwyfakTAOO9k3CqigNI/+utZXP86JDKrIAFAxl1HlmXR1lGsn7r/llj7qqMM9UpCQuepaUECOGhRyQguiftPtqQmRRYmlRkShW1tdoGZEw9oaqB3Z55dsM+q36/C21bPI0YNGjm2fCBcpuvaJAB4TG9XSl3XkAehLLi8agKdTHaXz6Ke1nvx4TptNyNnusoKYB0s9aWagkt8jiP7lAURBAe+9akpEt0F8RQyly0XNv94NcWKZj4/yzDH75gbKLgncmCA7qwAAAABJRU5ErkJggg==" style="margin: auto; width: 50%; top: 0px; bottom: 0px; left: 0px; right: 0px; position: absolute;"></div>
+  <div id="txt_message" style="position: absolute; left: 10px; bottom: 10px; cursor: pointer; display: block;font-size:.7em;line-height:1.5;color:#aaa;font-family:Arial,Helvetica,sans-serif"></div>
+</div>
+
+<script>
+var params = location.href.split('?')[1].split('&');
+data = {};
+for (x in params){
+	data[params[x].split('=')[0]] = params[x].split('=')[1];
+}
+
+var gax_media_domain = decodeURIComponent(data["media_path"]);
+var gax_width = data["w"]+'px';
+var gax_height = data["h"]+'px';
+var gax_skip = data["skipAd"];
+var gax_flash = data["flash"];
+var vaststream=decodeURIComponent(data["tag"]);
+var gax_pause=0;
+var gax_primary="flash";
+if (gax_flash=="false") gax_primary="html";
+console.log(gax_primary);
+
+function showPlayer(){
+  parent.postMessage({func_type:'abdShowVideoInpagePlayer', param1:gax_width, param2:gax_height},"*");
+}
+
+function closePlayer(){
+  	parent.postMessage({func_type:'abdCloseVideoInpagePlayer'},"*");
+}
+
+var jwp = jwplayer("out_stream_player").setup({
+  "file": "video.mp4",
+  "height": "100%",
+  "width": "100%",
+  "autostart": true,
+  "muted": true,
+  "primary":gax_primary,
+  "advertising": {
+      "skipoffset" : gax_skip,
+      "client": "vast",      
+      "tag": vaststream
+    },
+    "events": {
+      onReady: function(e) {
+        console.log('onReady');
+        jwp.setControls(false);
+        
+        document.getElementById("btn_mute").addEventListener("click", function(){
+            document.getElementById("btn_mute").style.display = "none";
+            document.getElementById("btn_unmute").style.display = "block";
+            jwp.setVolume(0);
+        });
+        document.getElementById("btn_unmute").addEventListener("click", function(){
+            document.getElementById("btn_mute").style.display = "block";
+            document.getElementById("btn_unmute").style.display = "none";
+            jwp.setVolume(50);
+        });
+        
+        window.addEventListener('message', function (ev) {
+          data=ev.data;
+          if (data.func_type=='abdSetVolume')  {
+        	  jwp.setVolume(data.param1);
+        	  if (data.param1 > 0){
+        		  document.getElementById("btn_mute").style.display = "block";
+                  document.getElementById("btn_unmute").style.display = "none";        		  
+        	  }else{
+        		  document.getElementById("btn_mute").style.display = "none";
+                  document.getElementById("btn_unmute").style.display = "block";
+        	  }
+       	  };
+          //if (data.func_type=='abdPlay')  {jwp.play(true);gax_pause=0;};
+        }, false);
+      },
+      onAdTime: function(e) {
+        timeRemaining = secondsAsTime(e.duration - e.position );
+        document.getElementById("txt_message").innerHTML = "Ad finishes in "+timeRemaining+" seconds";
+      },
+      onAdImpression: function(e) {
+        showPlayer();
+        jwp.setVolume(0);
+        cls = document.getElementsByClassName("jw-skip")[0];
+        document.getElementById('btn_skip').appendChild(cls);
+        document.getElementsByClassName("jw-icon-inline")[0].appendChild(document.getElementById('icon_skip'));
+        console.log('onAdImpression');
+      },
+      onAdPause: function(e) {
+	  /*
+        if (gax_pause==1) {
+          jwp.play(false);
+        }else{
+          jwp.play(true);
+        }        
+		*/
+        console.log('onAdPause');
+      },
+      onAdSkipped: function(e) {
+        closePlayer();
+        console.log('onSkip');
+      },
+      onAdComplete: function(e) {
+        setTimeout ("closePlayer();",2000);
+        
+        console.log('onComplete');
+      },
+      onAdError: function(e) {
+        closePlayer();
+        console.log('onEror');
+      }
+    }
+});
+
+function secondsAsTime(seconds) {
+    var hours = Math.floor(seconds / 3600);
+    seconds -= hours * 3600;
+    var minutes = Math.floor(seconds / 60);
+    seconds = Math.floor(seconds % 60);
+    function pad(n) {
+        return (n < 10) ? '0'+ n : n;
+    }
+    if (minutes==0) return pad(seconds);
+    else if (minutes>0 && hours==0) return pad(minutes) +':'+ pad(seconds);
+    else return pad(hours) +':'+ pad(minutes) +':'+ pad(seconds);
+}
+</script>
+</body>
+</html>
